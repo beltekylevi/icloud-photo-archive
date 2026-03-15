@@ -15,6 +15,16 @@ download-photos: ## Download photos from iCloud using icloudpd
 		--log-level info --domain com --directory /data --cookie-directory /auth \
 		--username $(ICLOUD_USERNAME) --size original --skip-live-photos
 
+prune-photos: ## Download and delete photos from iCloud using icloudpd
+	docker run --interactive --tty --rm \
+		--env TZ=$(TZ) \
+		--volume $(ICLOUD_PHOTOS_DIR):/data \
+		--volume $(ICLOUD_AUTH_DIR):/auth \
+		icloudpd/icloudpd:$(ICLOUDPD_VERSION) icloudpd \
+		--log-level info --domain com --directory /data --cookie-directory /auth \
+		--username $(ICLOUD_USERNAME) --size original --skip-live-photos \
+		--keep-icloud-recent-days 365
+
 upload-photos: ## Upload photos to Immich using immich-cli
 	docker run --interactive --tty --rm \
 		--env IMMICH_INSTANCE_URL=$(IMMICH_INSTANCE_URL) \
